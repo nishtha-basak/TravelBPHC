@@ -1,0 +1,142 @@
+/* travelbphc-frontend/src/App.css */
+.App {
+  font-family: Arial, sans-serif;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+  text-align: center;
+  color: #333;
+}
+
+section {
+  margin-bottom: 30px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  border: 1px solid #eee;
+}
+
+form div {
+  margin-bottom: 15px;
+}
+
+form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+
+form input[type="text"],
+form input[type="date"],
+form input[type="time"],
+form textarea {
+  width: calc(100% - 20px);
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+form textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+form button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 17px;
+  transition: background-color 0.3s ease;
+}
+
+form button:hover {
+  background-color: #0056b3;
+}
+
+form button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+}
+
+.posts-list {
+  display: grid;
+  gap: 20px;
+}
+
+.post-card {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.post-card h3 {
+  margin-top: 0;
+  color: #007bff;
+}
+
+.post-card p {
+  margin: 5px 0;
+  color: #666;
+}
+
+hr {
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+  margin: 40px 0;
+}
+.post-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.post-actions button {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.edit-button {
+  background-color: #ffc107; /* Bootstrap warning yellow */
+  color: #333;
+}
+
+.edit-button:hover {
+  background-color: #e0a800;
+}
+
+.delete-button {
+  background-color: #dc3545; /* Bootstrap danger red */
+  color: white;
+}
+
+.delete-button:hover {
+  background-color: #c82333;
+}
+
+.cancel-edit-button {
+    background-color: #6c757d; /* Bootstrap secondary grey */
+    color: white;
+    margin-left: 10px; /* Space it from the submit button */
+}
+
+.cancel-edit-button:hover {
+    background-color: #5a6268;
+}
