@@ -70,9 +70,9 @@ app.put('/api/posts/:id', async (req, res) => {
     try {
         const { origin, destination, date, time, notes } = req.body;
         const updatedPost = await Post.findByIdAndUpdate(
-            req.params.id, // ID from the URL parameter
-            { origin, destination, date, time, notes }, // New data
-            { new: true, runValidators: true } // Options: return the updated doc, run schema validators
+            req.params.id,
+            { origin, destination, date, time, notes },
+            { new: true, runValidators: true }
         );
 
         if (!updatedPost) {
@@ -80,7 +80,7 @@ app.put('/api/posts/:id', async (req, res) => {
         }
         res.json(updatedPost);
     } catch (err) {
-        res.status(400).json({ message: err.message }); // 400 for validation errors
+        res.status(400).json({ message: err.message });
     }
 });
 

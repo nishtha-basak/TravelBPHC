@@ -45,12 +45,15 @@ const handleSubmit = async (e) => {
         const postData = { origin, destination, date, time, notes };
 
         if (editingPostId) {
-            // If editingPostId is set, it's an update operation (PUT request)
-            await axios.put(`<span class="math-inline">\{API\_URL\}/</span>{editingPostId}`, postData);
+            // This is an update operation (PUT request)
+            // *** THIS IS THE LINE TO FIX ***
+            // Change to use BACKTICKS (`) and proper ${} interpolation
+            await axios.put(`${API_URL}/${editingPostId}`, postData); // <-- Corrected line
             alert('Post updated successfully!');
             setEditingPostId(null); // Clear editing state
         } else {
             // Otherwise, it's a new post creation (POST request)
+            // This line already looks correct from previous checks, it doesn't have the span tags.
             await axios.post(API_URL, postData);
             alert('Post created successfully!');
         }
@@ -77,7 +80,9 @@ const handleDelete = async (id) => {
     setLoading(true);
     setError(null);
     try {
-        await axios.delete(`<span class="math-inline">\{API\_URL\}/</span>{id}`);
+        // Change the entire string to use BACKTICKS (`)
+        // And wrap API_URL and id within ${}
+        await axios.delete(`${API_URL}/${id}`); // <-- This is the corrected line
         alert('Post deleted successfully!');
         fetchPosts(); // Re-fetch posts to update the list
     } catch (err) {
