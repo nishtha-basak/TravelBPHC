@@ -1,229 +1,312 @@
+// travelbphc-frontend/src/components/Home.js
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-// Define your backend API URL for posts
 const API_URL_POSTS = 'http://localhost:5000/api/posts';
 
-function Home({ token }) { // Accept token as a prop
+function Home({ token }) { // Make sure token is passed as a prop
     const [posts, setPosts] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    // Add state for the new 'name' field
+    const [personName, setPersonName] = useState(''); // State for the name of the person
     const [origin, setOrigin] = useState('');
     const [destination, setDestination] = useState('');
     const [date, setDate] = useState('');
     const [time, setTime] = useState('');
     const [notes, setNotes] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState(null);
-    const [editingPostId, setEditingPostId] = useState(null);
+    const [editingPost, setEditingPost] = useState(null); // State to hold the post being edited
 
-    // Axios instance for authenticated requests (optional, but good practice)
-    const authAxios = axios.create({
-        baseURL: API_URL_POSTS,
-        headers: {
-            Authorization: `Bearer ${token}` // Attach token to all requests
-        }
-    });
-
-    // Function to fetch all travel posts from the backend
+    // Function to fetch posts
     const fetchPosts = async () => {
         setLoading(true);
         setError(null);
         try {
-            // Note: GET /api/posts might not require a token if posts are public
-            // Adjust based on your backend's route protection for fetching
-            const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
-            const response = await axios.get(API_URL_POSTS, config);
+            // Include Authorization header for protected routes (if your GET /posts is protected)
+            // For now, assuming GET /posts is public as per standard practice, but if it needs auth:
+            const config = {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            };
+            const response = await axios.get(API_URL_POSTS, token ? config : {});
             setPosts(response.data);
         } catch (err) {
-            setError('Failed to fetch posts. Is the backend server running?');
-            console.error('Fetch error:', err);
+            console.error('Error fetching posts:', err);
+            setError('Failed to fetch posts.');
         } finally {
             setLoading(false);
         }
     };
 
-    // useEffect: Runs once when the component mounts to fetch initial posts
+    // Fetch posts on component mount or token change
     useEffect(() => {
         fetchPosts();
-    }, [token]); // Re-fetch if token changes (e.g., user logs in/out)
+    }, [token]); // Rerun if token changes
 
-    // Function to handle form submission (Create OR Update)
-    const handleSubmit = async (e) => {
+    const handleAddPost = async (e) => {
         e.preventDefault();
-        setLoading(true);
         setError(null);
 
-        // Ensure token exists for creating/updating posts
-        if (!token) {
-            setError('You must be logged in to create or update posts.');
-            setLoading(false);
+        // Basic validation - ensure all required fields are filled
+        if (!personName || !origin || !destination || !date || !time) {
+            setError('Please fill in all required fields (Name, Origin, Destination, Date, Time).');
             return;
         }
 
+        const newPostData = {
+            name: personName, // Include the new name field
+            origin,
+            destination,
+            date,
+            time,
+            notes
+        };
+
         try {
-            const postData = { origin, destination, date, time, notes };
-            const config = { // Configuration for authenticated requests
+            const config = {
                 headers: {
-                    Authorization: `Bearer ${token}`
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}` // Send the token in the header
                 }
             };
-
-            if (editingPostId) {
-                // Use authAxios or explicitly pass config for PUT
-                await axios.put(`${API_URL_POSTS}/${editingPostId}`, postData, config);
-                alert('Post updated successfully!');
-                setEditingPostId(null);
-            } else {
-                // Use authAxios or explicitly pass config for POST
-                await axios.post(API_URL_POSTS, postData, config);
-                alert('Post created successfully!');
-            }
-
-            // Clear form fields
+            const response = await axios.post(API_URL_POSTS, newPostData, config);
+            setPosts([response.data, ...posts]); // Add new post to the top of the list
+            
+            // Clear form fields after successful submission
+            setPersonName('');
             setOrigin('');
             setDestination('');
             setDate('');
             setTime('');
             setNotes('');
-            fetchPosts(); // Re-fetch posts to update the list
+
         } catch (err) {
-            setError(`Failed to ${editingPostId ? 'update' : 'create'} post.`);
-            console.error(`${editingPostId ? 'Update' : 'Create'} error:`, err);
-            if (err.response && err.response.status === 401) {
-                setError('Unauthorized. Please log in again.');
-            }
-        } finally {
-            setLoading(false);
+            console.error('Error adding post:', err.response ? err.response.data : err.message);
+            // Display specific error message from backend if available, otherwise a generic one
+            setError(err.response?.data?.message || 'Failed to add post. Please try again.');
         }
     };
 
-    // Function to handle deleting a post
-    const handleDelete = async (id) => {
-        if (!window.confirm('Are you sure you want to delete this post?')) {
-            return;
-        }
-        setLoading(true);
-        setError(null);
-
-        // Ensure token exists for deleting posts
-        if (!token) {
-            setError('You must be logged in to delete posts.');
-            setLoading(false);
-            return;
-        }
-
-        try {
-            const config = { // Configuration for authenticated requests
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            };
-            // Use authAxios or explicitly pass config for DELETE
-            await axios.delete(`${API_URL_POSTS}/${id}`, config);
-            alert('Post deleted successfully!');
-            fetchPosts(); // Re-fetch posts to update the list
-        } catch (err) {
-            setError('Failed to delete post.');
-            console.error('Delete error:', err);
-            if (err.response && err.response.status === 401) {
-                setError('Unauthorized. Please log in again.');
-            }
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    // Function to handle editing a post (populates the form)
-    const handleEdit = (post) => {
-        setEditingPostId(post._id);
+    // Handler to set the form into "edit" mode
+    const handleEditClick = (post) => {
+        setEditingPost(post);
+        // Populate the form fields with the data of the post being edited
+        setPersonName(post.name || ''); // Use empty string if name is undefined (for older posts)
         setOrigin(post.origin);
         setDestination(post.destination);
-        // Date input needs YYYY-MM-DD format
-        setDate(new Date(post.date).toISOString().split('T')[0]);
+        setDate(post.date);
         setTime(post.time);
         setNotes(post.notes);
-        window.scrollTo({ top: 0, behavior: 'smooth' }); // Scroll to top to show form
     };
 
+    // Handler to update an existing post
+    const handleUpdatePost = async (e) => {
+        e.preventDefault();
+        setError(null);
+
+        if (!editingPost) return; // Should not happen if edit button clicked correctly
+
+        // Basic validation for updates
+        if (!personName || !origin || !destination || !date || !time) {
+            setError('Please fill in all required fields (Name, Origin, Destination, Date, Time).');
+            return;
+        }
+
+        const updatedPostData = {
+            name: personName, // Include the updated name field
+            origin,
+            destination,
+            date,
+            time,
+            notes
+        };
+
+        try {
+            const config = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            };
+            const response = await axios.put(`${API_URL_POSTS}/${editingPost._id}`, updatedPostData, config);
+            
+            // Update the posts list with the modified post
+            setPosts(posts.map(post => 
+                post._id === editingPost._id ? response.data : post
+            ));
+            
+            // Exit edit mode and clear form fields
+            setEditingPost(null); 
+            setPersonName('');
+            setOrigin('');
+            setDestination('');
+            setDate('');
+            setTime('');
+            setNotes('');
+
+        } catch (err) {
+            console.error('Error updating post:', err.response ? err.response.data : err.message);
+            setError(err.response?.data?.message || 'Failed to update post. Please try again.');
+        }
+    };
+
+    // Handler to delete a post
+    const handleDeletePost = async (id) => {
+        setError(null);
+        if (window.confirm('Are you sure you want to delete this post?')) {
+            try {
+                const config = {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                };
+                await axios.delete(`${API_URL_POSTS}/${id}`, config);
+                setPosts(posts.filter(post => post._id !== id)); // Remove deleted post from list
+            } catch (err) {
+                console.error('Error deleting post:', err.response ? err.response.data : err.message);
+                setError(err.response?.data?.message || 'Failed to delete post.');
+            }
+        }
+    };
+
+    // Handler to cancel editing a post
+    const handleCancelEdit = () => {
+        setEditingPost(null);
+        // Clear form fields
+        setPersonName(''); 
+        setOrigin('');
+        setDestination('');
+        setDate('');
+        setTime('');
+        setNotes('');
+    };
+
+    // Display loading message
+    if (loading) return <p>Loading posts...</p>;
+    
+    // Display error message if fetching posts failed and there are no posts to show
+    if (error && !posts.length) return <p className="error-message">{error}</p>;
+
     return (
-        <section className="home-content">
-            <h2>{token ? 'Your Travel Posts' : 'Available Travel Posts'}</h2>
-
-            {/* Display Create/Edit Post Form only if authenticated */}
-            {token && (
-                <section className="post-form-section">
-                    <h2>{editingPostId ? 'Edit Travel Post' : 'Create a New Travel Post'}</h2>
-                    <form onSubmit={handleSubmit} className="travel-form">
-                        <div>
-                            <label>Origin:</label>
-                            <input type="text" value={origin} onChange={(e) => setOrigin(e.target.value)} required />
-                        </div>
-                        <div>
-                            <label>Destination:</label>
-                            <input type="text" value={destination} onChange={(e) => setDestination(e.target.value)} required />
-                        </div>
-                        <div>
-                            <label>Date:</label>
-                            <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required />
-                        </div>
-                        <div>
-                            <label>Time:</label>
-                            <input type="time" value={time} onChange={(e) => setTime(e.target.value)} required />
-                        </div>
-                        <div>
-                            <label>Notes:</label>
-                            <textarea value={notes} onChange={(e) => setNotes(e.target.value)}></textarea>
-                        </div>
-                        <button type="submit" disabled={loading}>
-                            {loading ? 'Submitting...' : (editingPostId ? 'Update Post' : 'Post Ride')}
+        <div className="home-content">
+            <section className="post-form-section">
+                <h2>{editingPost ? 'Edit Post' : 'Create New Post'}</h2>
+                <form onSubmit={editingPost ? handleUpdatePost : handleAddPost}>
+                    {/* Display general form error message if any */}
+                    {error && <p className="error-message">{error}</p>}
+                    
+                    {/* Name Field */}
+                    <div>
+                        <label htmlFor="personName">Name:</label>
+                        <input
+                            type="text"
+                            id="personName"
+                            value={personName}
+                            onChange={(e) => setPersonName(e.target.value)}
+                            required
+                        />
+                    </div>
+                    
+                    {/* Origin Field */}
+                    <div>
+                        <label htmlFor="origin">Origin:</label>
+                        <input
+                            type="text"
+                            id="origin"
+                            value={origin}
+                            onChange={(e) => setOrigin(e.target.value)}
+                            required
+                        />
+                    </div>
+                    
+                    {/* Destination Field */}
+                    <div>
+                        <label htmlFor="destination">Destination:</label>
+                        <input
+                            type="text"
+                            id="destination"
+                            value={destination}
+                            onChange={(e) => setDestination(e.target.value)}
+                            required
+                        />
+                    </div>
+                    
+                    {/* Date Field */}
+                    <div>
+                        <label htmlFor="date">Date:</label>
+                        <input
+                            type="date"
+                            id="date"
+                            value={date}
+                            onChange={(e) => setDate(e.target.value)}
+                            required
+                        />
+                    </div>
+                    
+                    {/* Time Field */}
+                    <div>
+                        <label htmlFor="time">Time:</label>
+                        <input
+                            type="time"
+                            id="time"
+                            value={time}
+                            onChange={(e) => setTime(e.target.value)}
+                            required
+                        />
+                    </div>
+                    
+                    {/* Notes Field (Optional) */}
+                    <div>
+                        <label htmlFor="notes">Notes (Optional):</label>
+                        <textarea
+                            id="notes"
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
+                        ></textarea>
+                    </div>
+                    
+                    {/* Submit/Update Button */}
+                    <button type="submit">
+                        {editingPost ? 'Update Post' : 'Add Post'}
+                    </button>
+                    
+                    {/* Cancel Edit Button (only visible when editing) */}
+                    {editingPost && (
+                        <button type="button" onClick={handleCancelEdit} className="cancel-edit-button">
+                            Cancel Edit
                         </button>
-                        {editingPostId && (
-                            <button type="button" onClick={() => {
-                                setEditingPostId(null);
-                                setOrigin('');
-                                setDestination('');
-                                setDate('');
-                                setTime('');
-                                setNotes('');
-                            }} className="cancel-edit-button" disabled={loading}>
-                                Cancel Edit
-                            </button>
-                        )}
-                        {error && <p style={{ color: 'red' }}>{error}</p>}
-                    </form>
-                </section>
-            )}
+                    )}
+                </form>
+            </section>
 
-            <hr />
+            <hr /> {/* Horizontal rule to separate sections */}
 
-            <h3>All Posts</h3>
-            {loading && <p>Loading posts...</p>}
-            {error && !loading && <p style={{ color: 'red' }}>{error}</p>}
-            {!loading && posts.length === 0 && <p>No posts available. Be the first to create one!</p>}
-            {!loading && posts.length > 0 && (
-                <div className="posts-list">
-                    {posts.map((post) => (
-                        <div key={post._id} className="post-card">
-                            <h3>{post.origin} &rarr; {post.destination}</h3>
-                            <p><strong>Date:</strong> {new Date(post.date).toLocaleDateString()}</p>
-                            <p><strong>Time:</strong> {post.time}</p>
-                            {post.notes && <p><strong>Notes:</strong> {post.notes}</p>}
-                            <p><small>Posted: {new Date(post.createdAt).toLocaleString()}</small></p>
-                            {/* Show Edit/Delete buttons only if authenticated */}
-                            {token && (
+            <section>
+                <h2>All Posts</h2>
+                {posts.length === 0 ? (
+                    <p>No posts available. Be the first to create one!</p>
+                ) : (
+                    <div className="posts-list">
+                        {posts.map(post => (
+                            <div key={post._id} className="post-card">
+                                <h3>{post.origin} to {post.destination}</h3>
+                                <p><strong>Name:</strong> {post.name}</p> {/* Display the new name field */}
+                                <p><strong>Date:</strong> {post.date}</p>
+                                <p><strong>Time:</strong> {post.time}</p>
+                                {post.notes && <p><strong>Notes:</strong> {post.notes}</p>}
+                                <p><small>Posted on: {new Date(post.createdAt).toLocaleDateString()} at {new Date(post.createdAt).toLocaleTimeString()}</small></p>
                                 <div className="post-actions">
-                                    <button onClick={() => handleEdit(post)} className="edit-button" disabled={loading}>
-                                        Edit
-                                    </button>
-                                    <button onClick={() => handleDelete(post._id)} className="delete-button" disabled={loading}>
-                                        Delete
-                                    </button>
+                                    <button onClick={() => handleEditClick(post)} className="edit-button">Edit</button>
+                                    <button onClick={() => handleDeletePost(post._id)} className="delete-button">Delete</button>
                                 </div>
-                            )}
-                        </div>
-                    ))}
-                </div>
-            )}
-        </section>
+                            </div>
+                        ))}
+                    </div>
+                )}
+            </section>
+        </div>
     );
 }
 

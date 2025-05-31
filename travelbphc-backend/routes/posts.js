@@ -15,8 +15,8 @@ router.get('/', async (req, res) => {
 
 // POST a new post
 router.post('/', async (req, res) => {
-    const { origin, destination, date, time, notes } = req.body;
-    const newPost = new Post({ origin, destination, date, time, notes });
+    const {name, origin, destination, date, time, notes } = req.body;
+    const newPost = new Post({ name, origin, destination, date, time, notes });
 
     try {
         const savedPost = await newPost.save();
@@ -42,10 +42,10 @@ router.delete('/:id', async (req, res) => {
 // PUT (Update) a post by ID
 router.put('/:id', async (req, res) => {
     try {
-        const { origin, destination, date, time, notes } = req.body;
+        const {name, origin, destination, date, time, notes } = req.body;
         const updatedPost = await Post.findByIdAndUpdate(
             req.params.id,
-            { origin, destination, date, time, notes },
+            {name, origin, destination, date, time, notes },
             { new: true, runValidators: true }
         );
 
