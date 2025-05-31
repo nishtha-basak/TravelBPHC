@@ -1,67 +1,82 @@
 /* travelbphc-frontend/src/App.css */
+
+/* Basic App Layout & General Styling */
 .App {
-  font-family: Arial, sans-serif;
-  max-width: 800px;
-  margin: 20px auto;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff; /* Ensure a white background for the main app container */
 }
 
 h1, h2 {
-  text-align: center;
-  color: #333;
+    text-align: center;
+    color: #333;
 }
 
 section {
-  margin-bottom: 30px;
-  padding: 15px;
-  background-color: #f9f9f9;
-  border-radius: 5px;
-  border: 1px solid #eee;
+    margin-bottom: 30px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    border: 1px solid #eee;
 }
 
+hr {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+    margin: 40px 0;
+}
+
+/* Form Styling (General for both Home and Auth forms) */
 form div {
-  margin-bottom: 15px;
+    margin-bottom: 15px;
 }
 
 form label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: bold;
-  color: #555;
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #555;
 }
 
 form input[type="text"],
 form input[type="date"],
 form input[type="time"],
-form textarea {
-  width: calc(100% - 20px);
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 16px;
+form textarea,
+form input[type="email"], /* Added for auth forms */
+form input[type="password"] /* Added for auth forms */
+{
+    width: calc(100% - 20px); /* Adjust for padding */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    box-sizing: border-box; /* Include padding in the element's total width and height */
 }
 
 form textarea {
-  resize: vertical;
-  min-height: 60px;
+    resize: vertical;
+    min-height: 60px;
 }
 
 form button {
-  background-color: #007bff;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 17px;
-  transition: background-color 0.3s ease;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 17px;
+    transition: background-color 0.3s ease;
 }
 
-form button:hover {
-  background-color: #0056b3;
+form button:hover:not(:disabled) { /* Added :not(:disabled) for better hover effect */
+    background-color: #0056b3;
 }
 
 form button:disabled {
@@ -69,66 +84,61 @@ form button:disabled {
     cursor: not-allowed;
 }
 
+/* Post List & Card Styling */
 .posts-list {
-  display: grid;
-  gap: 20px;
+    display: grid;
+    gap: 20px;
 }
 
 .post-card {
-  border: 1px solid #ddd;
-  padding: 15px;
-  border-radius: 8px;
-  background-color: #fff;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .post-card h3 {
-  margin-top: 0;
-  color: #007bff;
+    margin-top: 0;
+    color: #007bff;
 }
 
 .post-card p {
-  margin: 5px 0;
-  color: #666;
+    margin: 5px 0;
+    color: #666;
 }
 
-hr {
-  border: 0;
-  height: 1px;
-  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
-  margin: 40px 0;
-}
 .post-actions {
-  margin-top: 10px;
-  display: flex;
-  gap: 10px;
+    margin-top: 10px;
+    display: flex;
+    gap: 10px;
 }
 
 .post-actions button {
-  padding: 8px 12px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.2s ease;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
 }
 
 .edit-button {
-  background-color: #ffc107; /* Bootstrap warning yellow */
-  color: #333;
+    background-color: #ffc107; /* Bootstrap warning yellow */
+    color: #333;
 }
 
 .edit-button:hover {
-  background-color: #e0a800;
+    background-color: #e0a800;
 }
 
 .delete-button {
-  background-color: #dc3545; /* Bootstrap danger red */
-  color: white;
+    background-color: #dc3545; /* Bootstrap danger red */
+    color: white;
 }
 
 .delete-button:hover {
-  background-color: #c82333;
+    background-color: #c82333;
 }
 
 .cancel-edit-button {
@@ -141,7 +151,7 @@ hr {
     background-color: #5a6268;
 }
 
-/* General styling for forms and auth pages */
+/* Authentication Page Styling (Login/Signup) */
 .auth-container {
     max-width: 400px;
     margin: 40px auto;
@@ -149,7 +159,7 @@ hr {
     border: 1px solid #ccc;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    background-color: #f9f9f9;
+    background-color: #f9f9f9; /* This is the background color of the login box */
 }
 
 .auth-container h2 {
@@ -169,17 +179,19 @@ hr {
     color: #555;
 }
 
+/* Inherited from general form styles, but explicitly for auth if needed */
 .auth-container input[type="email"],
 .auth-container input[type="password"] {
-    width: calc(100% - 20px); /* Adjust for padding */
+    width: calc(100% - 20px);
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 16px;
+    box-sizing: border-box;
 }
 
 .auth-container button[type="submit"] {
-    width: 100%;
+    width: 100%; /* Full width button for auth forms */
     padding: 10px 15px;
     background-color: #007bff;
     color: white;
@@ -219,39 +231,59 @@ hr {
     text-decoration: underline;
 }
 
-/* Header navigation styling */
+/* Header navigation styling - MODIFIED FOR YOUR REQUEST */
 .App-header {
-    background-color: #282c34;
+    background-color: #f9f9f9; /* Changed to match login box background */
     padding: 20px;
-    color: white;
+    color: #333; /* Default text color for header, changed from white for contrast */
     text-align: center;
     border-bottom: 5px solid #007bff;
 }
 
 .App-header h1 {
     margin: 0 0 10px 0;
+    color: white; /* Explicitly set TravelBPHC title to white */
+    /* Add a background to the H1 itself to make it stand out against the light header background */
+    background-color: #282c34; /* Darker background for the title text */
+    display: inline-block; /* Makes background only cover the text */
+    padding: 5px 15px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .App-header nav {
     margin-top: 10px;
 }
 
+/* Styles to fix navigation bullet points and layout */
+.App-header nav ul {
+    list-style: none; /* Removes the bullet points */
+    padding: 0;      /* Removes default padding */
+    margin: 0;       /* Removes default margin */
+    display: flex;   /* Makes list items display in a row */
+    justify-content: center; /* Centers the navigation links */
+    align-items: center;
+}
+
+.App-header nav li {
+    margin: 0 10px; /* Adds space between the links */
+}
+
 .App-header nav a {
-    color: #61dafb;
+    color: #007bff; /* Changed link color for better contrast on light background */
     text-decoration: none;
-    margin: 0 10px;
     font-size: 1.1em;
     transition: color 0.2s ease-in-out;
 }
 
 .App-header nav a:hover {
-    color: #21a1f1;
+    color: #0056b3; /* Darker blue on hover */
 }
 
 .App-header .link-button {
     background: none;
     border: none;
-    color: #61dafb;
+    color: #007bff; /* Changed link button color for better contrast */
     cursor: pointer;
     font-size: 1.1em;
     margin: 0 10px;
@@ -261,6 +293,22 @@ hr {
 }
 
 .App-header .link-button:hover {
-    color: #21a1f1;
+    color: #0056b3;
     text-decoration: underline; /* Add underline on hover for link-like buttons */
+}
+
+.home-content {
+    padding-top: 20px; /* Add some top padding to separate from header */
+}
+
+.post-form-section {
+    margin-top: 20px;
+    margin-bottom: 40px;
+}
+
+.error-message { /* General error message style, consistent with auth-container */
+    color: red;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 0.9em;
 }

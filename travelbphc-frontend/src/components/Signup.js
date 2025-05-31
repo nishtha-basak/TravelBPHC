@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-// --- IMPORTANT: Use useHistory for React Router DOM v5 ---
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Use useNavigate for v6/7
 import axios from 'axios';
 
-// Define your backend API URL for authentication
 const API_URL_AUTH = 'http://localhost:5000/api/auth';
 
 function Signup({ onSignupSuccess }) {
@@ -12,8 +10,7 @@ function Signup({ onSignupSuccess }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // --- IMPORTANT: Use useHistory hook for v5 ---
-    const history = useHistory();
+    const navigate = useNavigate(); // Use useNavigate hook for v6/7
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -21,34 +18,26 @@ function Signup({ onSignupSuccess }) {
         setError(null);
 
         try {
-            // Make the API call to your backend registration endpoint
             const response = await axios.post(`${API_URL_AUTH}/register`, {
                 email,
                 password
             });
-
-            // If registration is successful, call the success handler from App.js
-            onSignupSuccess(); // This will navigate to login and show an alert
+            
+            onSignupSuccess();
             console.log('Signup successful:', response.data.message);
 
         } catch (err) {
             setLoading(false);
             if (err.response) {
-                // The request was made and the server responded with a status code
-                // that falls out of the range of 2xx
                 setError(err.response.data.message || 'Signup failed. Please try again.');
                 console.error('Signup error (response):', err.response.data);
             } else if (err.request) {
-                // The request was made but no response was received
                 setError('No response from server. Is the backend running?');
                 console.error('Signup error (request):', err.request);
             } else {
-                // Something happened in setting up the request that triggered an Error
                 setError('Error during signup. Please try again.');
                 console.error('Signup error (message):', err.message);
             }
-        } finally {
-            // setLoading(false); // Only set false on error, success handler redirects
         }
     };
 

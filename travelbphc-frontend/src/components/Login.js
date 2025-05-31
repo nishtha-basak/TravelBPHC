@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
-// --- IMPORTANT: Use useHistory for React Router DOM v5 ---
-import { Link, useHistory } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // Use useNavigate for v6/7
 import axios from 'axios';
 
-// Define your backend API URL for authentication
 const API_URL_AUTH = 'http://localhost:5000/api/auth';
 
 function Login({ onLoginSuccess }) {
@@ -12,8 +10,7 @@ function Login({ onLoginSuccess }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    // --- IMPORTANT: Use useHistory hook for v5 ---
-    const history = useHistory();
+    const navigate = useNavigate(); // Use useNavigate hook for v6/7
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -21,14 +18,12 @@ function Login({ onLoginSuccess }) {
         setError(null);
 
         try {
-            // Make the API call to your backend login endpoint
             const response = await axios.post(`${API_URL_AUTH}/login`, {
                 email,
                 password
             });
-
-            // If login is successful, call the success handler from App.js
-            onLoginSuccess(response.data.token); // Pass the token to App.js handler
+            
+            onLoginSuccess(response.data.token);
             console.log('Login successful:', response.data.message);
 
         } catch (err) {
@@ -43,8 +38,6 @@ function Login({ onLoginSuccess }) {
                 setError('Error during login. Please try again.');
                 console.error('Login error (message):', err.message);
             }
-        } finally {
-            // setLoading(false); // Only set false on error, success handler redirects
         }
     };
 
