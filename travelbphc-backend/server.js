@@ -3,140 +3,52 @@ require('dotenv').config(); // Loads variables from your .env file
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const jwt = require('jsonwebtoken'); // For JWTs
-const bcrypt = require('bcryptjs'); // For password hashing
+
+// --- NEW/CORRECTED IMPORTS ---
+// Import your route files
+const authRoutes = require('./routes/auth'); // Correctly import the auth routes
+const postRoutes = require('./routes/posts'); // Assuming you'll have post routes in a separate file too
+
+// Import your Mongoose models from their dedicated files
+const User = require('./models/User'); // Import the User model
+// Make sure you have a models/Post.js file. If not, create it.
+// If you don't have a models/Post.js, uncomment the Post schema definition below and use it carefully.
+// Otherwise, create models/Post.js and move the schema there.
+// For now, let's assume Post.js exists and import it.
+const Post = require('./models/Post'); // Import the Post model
+
+
 const app = express();
-const port = process.env.PORT || 5000; // Use port from .env or default to 5000
-
-
-//const app = express();
-//const port = process.env.PORT || 5000; // Use port from .env or default to 5000
-
+const PORT = process.env.PORT || 5000; // Use port from .env or default to 5000
 
 // Middleware: Essential for handling requests
 app.use(cors()); // Enables cross-origin requests (frontend to backend)
 app.use(express.json()); // Parses JSON data sent in requests
 
 // Connect to MongoDB Atlas
-mongoose.connect(process.env.MONGODB_URI)
+// Ensure your .env has MONGO_URI, not MONGODB_URI, for consistency with previous guidance
+mongoose.connect(process.env.MONGO_URI || process.env.MONGODB_URI) // Fallback for either variable name
     .then(() => console.log('MongoDB Atlas Connected Successfully!'))
     .catch(err => console.error('MongoDB connection error:', err));
 
-// Define the schema for your travel posts (what data each post will hold)
-const postSchema = new mongoose.Schema({
-    origin: { type: String, required: true },
-    destination: { type: String, required: true },
-    date: { type: String, required: true }, // Storing as string for simplicity on Day 1
-    time: { type: String, required: true }, // Storing as string for simplicity on Day 1
-    notes: { type: String, default: '' },
-    createdAt: { type: Date, default: Date.now } // Automatically set creation time
+// --- REMOVE THE DIRECT API ROUTES FOR POSTS AND AUTH HERE ---
+// You were directly defining app.get('/api/posts'), app.post('/api/posts'), etc.,
+// AND app.post('/api/auth/login') directly in server.js.
+// When using route files, these definitions should live in the route files themselves.
+
+// --- ROUTE INTEGRATIONS (THE FIX FOR YOUR 404) ---
+// This is where you tell Express to use your imported route modules
+// Any request starting with /api/auth will be handled by authRoutes
+app.use('/api/auth', authRoutes);
+// Any request starting with /api/posts will be handled by postRoutes (for travel posts)
+app.use('/api/posts', postRoutes); // Make sure you have a 'routes/posts.js' and move your post routes there!
+
+// Simple root route for testing if server is up
+app.get('/', (req, res) => {
+    res.send('TravelBPHC Backend API is running!');
 });
-const Post = mongoose.model('Post', postSchema); // Create a Mongoose Model from the schema
-// Import your Mongoose models
-//const Post = require('./models/Post'); // Your existing Post model
-const User = require('./models/User'); // Your new User model
-
-// API Routes: Endpoints for your frontend to interact with
-
-// GET all posts (e.g., http://localhost:5000/api/posts)
-app.get('/api/posts', async (req, res) => {
-    try {
-        const posts = await Post.find().sort({ createdAt: -1 }); // Find all posts, sort by newest first
-        res.json(posts); // Send them as JSON
-    } catch (err) {
-        res.status(500).json({ message: err.message }); // Send error if something goes wrong
-    }
-});
-
-// POST a new post (e.g., http://localhost:5000/api/posts)
-app.post('/api/posts', async (req, res) => {
-    const { origin, destination, date, time, notes } = req.body; // Get data from the request body
-    const newPost = new Post({ origin, destination, date, time, notes }); // Create a new Post object
-
-    try {
-        const savedPost = await newPost.save(); // Save the new post to MongoDB
-        res.status(201).json(savedPost); // Send back the saved post with a 201 Created status
-    } catch (err) {
-        res.status(400).json({ message: err.message }); // Send error if data is invalid
-    }
-});
-
-// DELETE a post by ID (e.g., http://localhost:5000/api/posts/60d5ec49c612b4001c8c9e5a)
-app.delete('/api/posts/:id', async (req, res) => {
-    try {
-        const deletedPost = await Post.findByIdAndDelete(req.params.id);
-        if (!deletedPost) {
-            return res.status(404).json({ message: 'Post not found' });
-        }
-        res.json({ message: 'Post deleted successfully', deletedPost });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-});
-
-// PUT (Update) a post by ID
-app.put('/api/posts/:id', async (req, res) => {
-    try {
-        const { origin, destination, date, time, notes } = req.body;
-        const updatedPost = await Post.findByIdAndUpdate(
-            req.params.id,
-            { origin, destination, date, time, notes },
-            { new: true, runValidators: true }
-        );
-
-        if (!updatedPost) {
-            return res.status(404).json({ message: 'Post not found' });
-        }
-        res.json(updatedPost);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
-});
-
-// @route   POST /api/auth/login
-// @desc    Authenticate user & get token (Login)
-// @access  Public
-app.post('/api/auth/login', async (req, res) => {
-    const { email, password } = req.body;
-
-    try {
-        // 1. Check if user exists
-        let user = await User.findOne({ email });
-        if (!user) {
-            return res.status(400).json({ message: 'Invalid credentials' }); // Use generic message for security
-        }
-
-        // 2. Compare provided password with hashed password in DB
-        const isMatch = await user.matchPassword(password); // Using the method defined in User.js
-        if (!isMatch) {
-            return res.status(400).json({ message: 'Invalid credentials' }); // Use generic message for security
-        }
-
-        // 3. Generate JWT token
-        const payload = {
-            user: {
-                id: user.id // Payload contains user's ID
-            }
-        };
-
-        jwt.sign(
-            payload,
-            process.env.JWT_SECRET, // Use the same secret from your .env
-            { expiresIn: '1h' }, // Token expires in 1 hour
-            (err, token) => {
-                if (err) throw err;
-                res.json({ token, message: 'Logged in successfully!' }); // Send token back to frontend
-            }
-        );
-
-    } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server error');
-    }
-});
-
 
 // Start the server and listen for requests
-app.listen(port, () => {
-    console.log(`Backend server running on http://localhost:${port}`);
+app.listen(PORT, () => {
+    console.log(`Backend server running on http://localhost:${PORT}`);
 });
