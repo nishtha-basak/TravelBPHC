@@ -2,15 +2,18 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, useNavigate, Link, Navigate } from 'react-router-dom';
 import './App.css';
-import { jwtDecode } from 'jwt-decode'; // Import jwtDecode
+import { jwtDecode } from 'jwt-decode';
 
-import Home from './components/Home';
+// Import your custom components
+import AllPosts from './components/AllPosts'; // Renamed Home to AllPosts
+import CreatePost from './components/CreatePost'; // New component
+import MyPosts from './components/MyPosts';     // New component
 import Login from './components/Login';
 import Signup from './components/Signup';
 
 function App() {
     const [token, setToken] = useState(localStorage.getItem('token'));
-    const [currentUserId, setCurrentUserId] = useState(null); // NEW: State for current user's ID
+    const [currentUserId, setCurrentUserId] = useState(null); // State for current user's ID
 
     const navigate = useNavigate();
 
@@ -19,12 +22,10 @@ function App() {
         if (token) {
             try {
                 const decoded = jwtDecode(token);
-                // Assuming your JWT payload structure is { user: { id: '...' } }
                 setCurrentUserId(decoded.user.id);
-                console.log("App.js: Current User ID from token:", decoded.user.id); // ADD THIS LINE
+                // console.log("App.js: Current User ID from token:", decoded.user.id); // Keep for debugging if needed
             } catch (error) {
                 console.error("Failed to decode token:", error);
-                // If token is invalid, clear it
                 setToken(null);
                 localStorage.removeItem('token');
                 setCurrentUserId(null);
@@ -35,40 +36,41 @@ function App() {
         }
     };
 
-    // Effect to decode token when it changes
+    // Effect to decode token when it changes or on initial load
     useEffect(() => {
         decodeToken(token);
     }, [token]);
 
-    // This runs on component mount and whenever 'token' or 'navigate' changes.
+    // Redirection logic based on token presence
     useEffect(() => {
         if (token) {
-            if (window.location.pathname === '/login' || window.location.pathname === '/signup') {
-                navigate('/');
+            if (window.location.pathname === '/login' || window.location.pathname === '/signup' || window.location.pathname === '/') {
+                navigate('/posts'); // Redirect to /posts if logged in and on auth pages or root
             }
         } else {
             if (window.location.pathname !== '/login' && window.location.pathname !== '/signup') {
-                navigate('/login');
+                navigate('/login'); // Redirect to login if not logged in and not on auth pages
             }
         }
     }, [token, navigate]);
 
+
     const handleLoginSuccess = (newToken) => {
         setToken(newToken);
         localStorage.setItem('token', newToken);
-        decodeToken(newToken); // Decode the new token
-        navigate('/'); // Redirect to home page
+        decodeToken(newToken);
+        navigate('/posts'); // Redirect to all posts page
     };
 
     const handleSignupSuccess = () => {
-        navigate('/login'); // After signup, redirect to login page
+        navigate('/login');
     };
 
     const handleLogout = () => {
         setToken(null);
         localStorage.removeItem('token');
-        setCurrentUserId(null); // Clear user ID on logout
-        navigate('/login'); // Redirect to login page
+        setCurrentUserId(null);
+        navigate('/login');
     };
 
     return (
@@ -77,13 +79,19 @@ function App() {
                 <h1>TravelBPHC</h1>
                 <nav>
                     <ul>
+                        <li><Link to="/posts">All Posts</Link></li> {/* New link for All Posts */}
+                        {token && ( // Show these links only if logged in
+                            <>
+                                <li><Link to="/posts/create">Create New Post</Link></li> {/* New link for Create Post */}
+                                <li><Link to="/my-posts">My Posts</Link></li> {/* New link for My Posts */}
+                            </>
+                        )}
                         {!token ? (
                             <>
                                 <li><Link to="/login">Login</Link></li>
                                 <li><Link to="/signup">Sign Up</Link></li>
                             </>
                         ) : (
-                            // Render a button for logout when a token exists
                             <li>
                                 <button onClick={handleLogout} className="link-button">Logout</button>
                             </li>
@@ -97,11 +105,20 @@ function App() {
                     <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
                     <Route path="/signup" element={<Signup onSignupSuccess={handleSignupSuccess} />} />
 
-                    {/* Pass currentUserId to Home component */}
+                    {/* All Posts is accessible by default for viewing, but actions (like/comment) need auth */}
+                    <Route path="/posts" element={<AllPosts token={token} currentUserId={currentUserId} />} />
+
+                    {/* Protected Routes for creating, editing, deleting */}
                     <Route
-                        path="/"
-                        element={token ? <Home token={token} currentUserId={currentUserId} /> : <Navigate to="/login" replace />}
+                        path="/posts/create"
+                        element={token ? <CreatePost token={token} /> : <Navigate to="/login" replace />}
                     />
+                    <Route
+                        path="/my-posts"
+                        element={token ? <MyPosts token={token} currentUserId={currentUserId} /> : <Navigate to="/login" replace />}
+                    />
+                    {/* Root path redirects to /posts if logged in, otherwise to /login */}
+                    <Route path="/" element={token ? <Navigate to="/posts" replace /> : <Navigate to="/login" replace />} />
                 </Routes>
             </main>
         </div>
