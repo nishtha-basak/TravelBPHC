@@ -5,11 +5,14 @@ import './App.css';
 import { jwtDecode } from 'jwt-decode';
 
 // Import your custom components
-import AllPosts from './components/AllPosts'; // Renamed Home to AllPosts
-import CreatePost from './components/CreatePost'; // New component
-import MyPosts from './components/MyPosts';     // New component
+import AllPosts from './components/AllPosts';
+import CreatePost from './components/CreatePost';
+import MyPosts from './components/MyPosts';
 import Login from './components/Login';
 import Signup from './components/Signup';
+import SearchPosts from './components/SearchPosts'; // NEW: Import SearchPosts component
+import ArchivedPosts from './components/ArchivedPosts'; // NEW: Import ArchivedPosts component
+
 
 function App() {
     const [token, setToken] = useState(localStorage.getItem('token'));
@@ -23,7 +26,6 @@ function App() {
             try {
                 const decoded = jwtDecode(token);
                 setCurrentUserId(decoded.user.id);
-                // console.log("App.js: Current User ID from token:", decoded.user.id); // Keep for debugging if needed
             } catch (error) {
                 console.error("Failed to decode token:", error);
                 setToken(null);
@@ -36,39 +38,25 @@ function App() {
         }
     };
 
-    // Effect to decode token when it changes or on initial load
+    // Effect to decode token on component mount or when token changes
     useEffect(() => {
         decodeToken(token);
     }, [token]);
 
-    // Redirection logic based on token presence
-    useEffect(() => {
-        if (token) {
-            if (window.location.pathname === '/login' || window.location.pathname === '/signup' || window.location.pathname === '/') {
-                navigate('/posts'); // Redirect to /posts if logged in and on auth pages or root
-            }
-        } else {
-            if (window.location.pathname !== '/login' && window.location.pathname !== '/signup') {
-                navigate('/login'); // Redirect to login if not logged in and not on auth pages
-            }
-        }
-    }, [token, navigate]);
-
-
     const handleLoginSuccess = (newToken) => {
-        setToken(newToken);
         localStorage.setItem('token', newToken);
-        decodeToken(newToken);
-        navigate('/posts'); // Redirect to all posts page
+        setToken(newToken);
+        navigate('/posts'); // Navigate to posts page after successful login
     };
 
     const handleSignupSuccess = () => {
+        alert('Signup successful! Please login.');
         navigate('/login');
     };
 
     const handleLogout = () => {
-        setToken(null);
         localStorage.removeItem('token');
+        setToken(null);
         setCurrentUserId(null);
         navigate('/login');
     };
@@ -79,13 +67,11 @@ function App() {
                 <h1>TravelBPHC</h1>
                 <nav>
                     <ul>
-                        <li><Link to="/posts">All Posts</Link></li> {/* New link for All Posts */}
-                        {token && ( // Show these links only if logged in
-                            <>
-                                <li><Link to="/posts/create">Create New Post</Link></li> {/* New link for Create Post */}
-                                <li><Link to="/my-posts">My Posts</Link></li> {/* New link for My Posts */}
-                            </>
-                        )}
+                        <li><Link to="/posts">All Posts</Link></li>
+                        {token && <li><Link to="/posts/create">Create Post</Link></li>}
+                        {token && <li><Link to="/my-posts">My Posts</Link></li>}
+                        {token && <li><Link to="/search">Search Travel</Link></li>} {/* NEW Nav Link */}
+                        {token && <li><Link to="/archived-posts">Archived Posts</Link></li>} {/* NEW Nav Link */}
                         {!token ? (
                             <>
                                 <li><Link to="/login">Login</Link></li>
@@ -111,11 +97,19 @@ function App() {
                     {/* Protected Routes for creating, editing, deleting */}
                     <Route
                         path="/posts/create"
-                        element={token ? <CreatePost token={token} /> : <Navigate to="/login" replace />}
+                        element={token ? <CreatePost token={token} currentUserId={currentUserId} /> : <Navigate to="/login" replace />} // Pass currentUserId
                     />
                     <Route
                         path="/my-posts"
                         element={token ? <MyPosts token={token} currentUserId={currentUserId} /> : <Navigate to="/login" replace />}
+                    />
+                    <Route
+                        path="/search" // NEW Route for search page
+                        element={<SearchPosts token={token} currentUserId={currentUserId} />}
+                    />
+                     <Route
+                        path="/archived-posts" // NEW Route for archived posts
+                        element={token ? <ArchivedPosts token={token} currentUserId={currentUserId} /> : <Navigate to="/login" replace />}
                     />
                     {/* Root path redirects to /posts if logged in, otherwise to /login */}
                     <Route path="/" element={token ? <Navigate to="/posts" replace /> : <Navigate to="/login" replace />} />

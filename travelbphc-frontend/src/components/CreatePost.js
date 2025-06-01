@@ -5,13 +5,16 @@ import { useNavigate } from 'react-router-dom';
 
 const API_URL_POSTS = 'http://localhost:5000/api/posts';
 
-function CreatePost({ token }) {
+function CreatePost({ token, currentUserId }) { // Receive currentUserId
     const navigate = useNavigate();
-    const [personName, setPersonName] = useState('');
+    const [personName, setPersonName] = useState(''); // This might eventually be derived from user profile
     const [origin, setOrigin] = useState('');
     const [destination, setDestination] = useState('');
-    const [date, setDate] = useState('');
-    const [time, setTime] = useState('');
+    const [date, setDate] = useState(''); // YYYY-MM-DD
+    const [time, setTime] = useState(''); // HH:MM
+    const [leaveTimeStart, setLeaveTimeStart] = useState('00:00'); // NEW: Default to start of day
+    const [leaveTimeEnd, setLeaveTimeEnd] = useState('23:59');     // NEW: Default to end of day
+    const [lookingForPeople, setLookingForPeople] = useState(0); // NEW: Default to 0
     const [notes, setNotes] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -31,8 +34,30 @@ function CreatePost({ token }) {
         setError(null);
         setSuccessMessage(null);
 
+        // Basic validation for time range
+        if (leaveTimeStart && leaveTimeEnd && leaveTimeStart > leaveTimeEnd) {
+            setError('Start time cannot be after end time.');
+            setLoading(false);
+            return;
+        }
+        if (lookingForPeople < 0) {
+            setError('Number of people looking for cannot be negative.');
+            setLoading(false);
+            return;
+        }
+
         try {
-            const postData = { name: personName, origin, destination, date, time, notes };
+            const postData = {
+                name: personName, // Consider deriving this from the logged-in user's profile
+                origin,
+                destination,
+                date,
+                time,
+                leaveTimeStart,   // NEW
+                leaveTimeEnd,     // NEW
+                lookingForPeople, // NEW
+                notes
+            };
             await axios.post(API_URL_POSTS, postData, getConfig());
             setSuccessMessage('Post created successfully!');
             // Clear form
@@ -41,22 +66,22 @@ function CreatePost({ token }) {
             setDestination('');
             setDate('');
             setTime('');
+            setLeaveTimeStart('00:00'); // Reset to default
+            setLeaveTimeEnd('23:59');   // Reset to default
+            setLookingForPeople(0);     // Reset to default
             setNotes('');
-            // Optionally, redirect to All Posts page after a short delay
-            setTimeout(() => {
-                navigate('/posts');
-            }, 1500);
+            // Optionally navigate after a short delay
+            setTimeout(() => navigate('/posts'), 1500);
         } catch (err) {
-            const errorMessage = err.response?.data?.message || 'Failed to create post. Please try again.';
-            setError(errorMessage);
-            console.error('Create post error:', err.response?.data || err.message);
+            console.error('Error creating post:', err.response?.data || err.message);
+            setError(err.response?.data?.message || 'Failed to create post. Please try again.');
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="create-post-container">
+        <div className="form-container">
             <h2>Create New Travel Post</h2>
             {error && <p className="error-message">{error}</p>}
             {successMessage && <p className="success-message">{successMessage}</p>}
@@ -92,7 +117,7 @@ function CreatePost({ token }) {
                     />
                 </div>
                 <div>
-                    <label htmlFor="date">Date:</label>
+                    <label htmlFor="date">Travel Date:</label>
                     <input
                         type="date"
                         id="date"
@@ -102,7 +127,7 @@ function CreatePost({ token }) {
                     />
                 </div>
                 <div>
-                    <label htmlFor="time">Time:</label>
+                    <label htmlFor="time">Preferred Departure Time (e.g., 18:00):</label>
                     <input
                         type="time"
                         id="time"
@@ -111,6 +136,39 @@ function CreatePost({ token }) {
                         required
                     />
                 </div>
+                {/* NEW FIELDS */}
+                <div>
+                    <label htmlFor="leaveTimeStart">Flexible Departure Start Time:</label>
+                    <input
+                        type="time"
+                        id="leaveTimeStart"
+                        value={leaveTimeStart}
+                        onChange={(e) => setLeaveTimeStart(e.target.value)}
+                        required
+                    />
+                </div>
+                <div>
+                    <label htmlFor="leaveTimeEnd">Flexible Departure End Time:</label>
+                    <input
+                        type="time"
+                        id="leaveTimeEnd"
+                        value={leaveTimeEnd}
+                        onChange={(e) => setLeaveTimeEnd(e.target.value)}
+                        required
+                    />
+                </div>
+                <div>
+                    <label htmlFor="lookingForPeople">Number of people you are looking for:</label>
+                    <input
+                        type="number"
+                        id="lookingForPeople"
+                        value={lookingForPeople}
+                        onChange={(e) => setLookingForPeople(Math.max(0, parseInt(e.target.value)))} // Ensure non-negative
+                        min="0" // HTML5 min attribute
+                        required
+                    />
+                </div>
+                {/* END NEW FIELDS */}
                 <div>
                     <label htmlFor="notes">Notes:</label>
                     <textarea

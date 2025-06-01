@@ -2,33 +2,33 @@
 
 /* Basic App Layout & General Styling */
 .App {
-    font-family: Arial, sans-serif;
+    font-family: 'Inter', sans-serif; /* Changed font to Inter for a modern look */
     max-width: 800px;
     margin: 20px auto;
     padding: 20px;
-    border: 1px solid #ddd;
+    border: 1px solid #dbdbdb; /* Lighter border */
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    background-color: #ffffff; /* Ensure a white background for the main app container */
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24); /* Subtle shadow */
+    background-color: #ffffff;
 }
 
 h1, h2 {
     text-align: center;
-    color: #333;
+    color: #262626; /* Darker text for headings */
 }
 
 section {
     margin-bottom: 30px;
     padding: 15px;
-    background-color: #f9f9f9;
+    background-color: #fafafa; /* Lighter background for sections */
     border-radius: 5px;
-    border: 1px solid #eee;
+    border: 1px solid #efefef; /* Very light border */
 }
 
 hr {
     border: 0;
     height: 1px;
-    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0)); /* Lighter gradient */
     margin: 40px 0;
 }
 
@@ -40,23 +40,23 @@ form div {
 form label {
     display: block;
     margin-bottom: 5px;
-    font-weight: bold;
-    color: #555;
+    font-weight: 600; /* Slightly bolder labels */
+    color: #262626;
 }
 
 form input[type="text"],
 form input[type="date"],
 form input[type="time"],
 form textarea,
-form input[type="email"], /* Added for auth forms */
-form input[type="password"] /* Added for auth forms */
-{
-    width: calc(100% - 20px); /* Adjust for padding */
+form input[type="email"],
+form input[type="password"] {
+    width: calc(100% - 20px);
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #dbdbdb; /* Lighter border */
     border-radius: 4px;
     font-size: 16px;
-    box-sizing: border-box; /* Include padding in the element's total width and height */
+    box-sizing: border-box;
+    background-color: #fafafa; /* Light input background */
 }
 
 form textarea {
@@ -65,18 +65,19 @@ form textarea {
 }
 
 form button {
-    background-color: #007bff;
+    background-color: #0095f6; /* Instagram blue */
     color: white;
     padding: 10px 20px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 17px;
+    font-weight: 600; /* Bolder button text */
     transition: background-color 0.3s ease;
 }
 
-form button:hover:not(:disabled) { /* Added :not(:disabled) for better hover effect */
-    background-color: #0056b3;
+form button:hover:not(:disabled) {
+    background-color: #007acb; /* Darker blue on hover */
 }
 
 form button:disabled {
@@ -86,69 +87,85 @@ form button:disabled {
 
 /* Post List & Card Styling */
 .posts-list {
-    display: grid;
-    gap: 20px;
+    display: flex; /* Changed to flex for vertical stacking with gap */
+    flex-direction: column;
+    gap: 20px; /* Space between posts */
 }
 
 .post-card {
-    border: 1px solid #ddd;
-    padding: 15px;
-    border-radius: 8px;
     background-color: #fff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.1); /* Subtle shadow */
+    border: 1px solid #efefef; /* Very light border */
 }
 
 .post-card h3 {
     margin-top: 0;
-    color: #007bff;
+    color: #262626; /* Dark text */
+    font-size: 1.2em;
+    margin-bottom: 10px;
 }
 
 .post-card p {
     margin: 5px 0;
-    color: #666;
+    color: #484848; /* Slightly lighter text */
+    font-size: 0.95em;
+}
+
+.post-card p strong {
+    color: #262626;
+}
+
+.post-card small {
+    color: #8e8e8e; /* Lighter grey for small text */
+    font-size: 0.8em;
 }
 
 .post-actions {
-    margin-top: 10px;
+    margin-top: 15px;
     display: flex;
     gap: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #efefef; /* Separator line */
 }
 
 .post-actions button {
-    padding: 8px 12px;
+    padding: 8px 15px; /* Slightly larger padding */
     border: none;
     border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
+    font-weight: 600;
     transition: background-color 0.2s ease;
 }
 
 .edit-button {
-    background-color: #ffc107; /* Bootstrap warning yellow */
-    color: #333;
+    background-color: #e0e0e0; /* Light grey */
+    color: #262626;
 }
 
 .edit-button:hover {
-    background-color: #e0a800;
+    background-color: #d0d0d0;
 }
 
 .delete-button {
-    background-color: #dc3545; /* Bootstrap danger red */
+    background-color: #ed4956; /* Instagram-like red */
     color: white;
 }
 
 .delete-button:hover {
-    background-color: #c82333;
+    background-color: #d83b4b;
 }
 
 .cancel-edit-button {
-    background-color: #6c757d; /* Bootstrap secondary grey */
+    background-color: #8e8e8e; /* Darker grey */
     color: white;
-    margin-left: 10px; /* Space it from the submit button */
+    margin-left: 10px;
 }
 
 .cancel-edit-button:hover {
-    background-color: #5a6268;
+    background-color: #7a7a7a;
 }
 
 /* Authentication Page Styling (Login/Signup) */
@@ -156,15 +173,15 @@ form button:disabled {
     max-width: 400px;
     margin: 40px auto;
     padding: 20px;
-    border: 1px solid #ccc;
+    border: 1px solid #dbdbdb;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    background-color: #f9f9f9; /* This is the background color of the login box */
+    background-color: #fff; /* White background for auth box */
 }
 
 .auth-container h2 {
     text-align: center;
-    color: #333;
+    color: #262626;
     margin-bottom: 20px;
 }
 
@@ -175,35 +192,36 @@ form button:disabled {
 .auth-container label {
     display: block;
     margin-bottom: 5px;
-    font-weight: bold;
-    color: #555;
+    font-weight: 600;
+    color: #262626;
 }
 
-/* Inherited from general form styles, but explicitly for auth if needed */
 .auth-container input[type="email"],
 .auth-container input[type="password"] {
     width: calc(100% - 20px);
     padding: 10px;
-    border: 1px solid #ddd;
+    border: 1px solid #dbdbdb;
     border-radius: 4px;
     font-size: 16px;
     box-sizing: border-box;
+    background-color: #fafafa;
 }
 
 .auth-container button[type="submit"] {
-    width: 100%; /* Full width button for auth forms */
+    width: 100%;
     padding: 10px 15px;
-    background-color: #007bff;
+    background-color: #0095f6;
     color: white;
     border: none;
     border-radius: 4px;
     font-size: 16px;
+    font-weight: 600;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
 }
 
 .auth-container button[type="submit"]:hover:not(:disabled) {
-    background-color: #0056b3;
+    background-color: #007acb;
 }
 
 .auth-container button[type="submit"]:disabled {
@@ -212,7 +230,7 @@ form button:disabled {
 }
 
 .auth-container .error-message {
-    color: red;
+    color: #ed4956; /* Instagram red for errors */
     text-align: center;
     margin-top: 10px;
 }
@@ -223,7 +241,7 @@ form button:disabled {
 }
 
 .auth-container p a {
-    color: #007bff;
+    color: #0095f6;
     text-decoration: none;
 }
 
@@ -231,74 +249,81 @@ form button:disabled {
     text-decoration: underline;
 }
 
-/* Header navigation styling - MODIFIED FOR YOUR REQUEST */
+/* Header navigation styling */
 .App-header {
-    background-color: #f9f9f9; /* Changed to match login box background */
-    padding: 20px;
-    color: #333; /* Default text color for header, changed from white for contrast */
+    background-color: #fff; /* White header background */
+    padding: 15px 20px; /* Reduced padding */
+    color: #262626;
     text-align: center;
-    border-bottom: 5px solid #007bff;
+    border-bottom: 1px solid #dbdbdb; /* Subtle border */
+    box-shadow: 0 1px 0 rgba(0,0,0,0.05); /* Very subtle bottom shadow */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
 }
 
 .App-header h1 {
-    margin: 0 0 10px 0;
-    color: white; /* Explicitly set TravelBPHC title to white */
-    /* Add a background to the H1 itself to make it stand out against the light header background */
-    background-color: #282c34; /* Darker background for the title text */
-    display: inline-block; /* Makes background only cover the text */
-    padding: 5px 15px;
-    border-radius: 5px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    margin: 0;
+    color: #262626; /* Dark text for title */
+    font-size: 1.5em;
+    font-weight: 700;
+    /* Removed specific background for H1 to match Instagram's clean header */
+    padding: 0;
+    box-shadow: none;
+    display: block; /* Revert to block */
 }
 
 .App-header nav {
-    margin-top: 10px;
+    margin-top: 0; /* Remove margin-top */
 }
 
-/* Styles to fix navigation bullet points and layout */
 .App-header nav ul {
-    list-style: none; /* Removes the bullet points */
-    padding: 0;      /* Removes default padding */
-    margin: 0;       /* Removes default margin */
-    display: flex;   /* Makes list items display in a row */
-    justify-content: center; /* Centers the navigation links */
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
     align-items: center;
+    flex-wrap: wrap; /* Allow navigation items to wrap */
 }
 
 .App-header nav li {
-    margin: 0 10px; /* Adds space between the links */
+    margin: 0 10px;
 }
 
 .App-header nav a {
-    color: #007bff; /* Changed link color for better contrast on light background */
+    color: #0095f6; /* Instagram blue for links */
     text-decoration: none;
-    font-size: 1.1em;
+    font-size: 1.0em; /* Slightly smaller font */
+    font-weight: 600;
     transition: color 0.2s ease-in-out;
 }
 
 .App-header nav a:hover {
-    color: #0056b3; /* Darker blue on hover */
+    color: #007acb;
 }
 
 .App-header .link-button {
     background: none;
     border: none;
-    color: #007bff; /* Changed link button color for better contrast */
+    color: #0095f6;
     cursor: pointer;
-    font-size: 1.1em;
+    font-size: 1.0em;
+    font-weight: 600;
     margin: 0 10px;
     padding: 0;
-    text-decoration: none; /* Make it look like a link */
+    text-decoration: none;
     transition: color 0.2s ease-in-out;
 }
 
 .App-header .link-button:hover {
-    color: #0056b3;
-    text-decoration: underline; /* Add underline on hover for link-like buttons */
+    color: #007acb;
+    text-decoration: underline;
 }
 
 .home-content {
-    padding-top: 20px; /* Add some top padding to separate from header */
+    padding-top: 20px;
 }
 
 .post-form-section {
@@ -306,9 +331,307 @@ form button:disabled {
     margin-bottom: 40px;
 }
 
-.error-message { /* General error message style, consistent with auth-container */
-    color: red;
+.error-message {
+    color: #ed4956;
     text-align: center;
     margin-top: 10px;
     font-size: 0.9em;
+}
+
+/* NEW: Archived Post Styling */
+.archived-post {
+    background-color: #f0f0f0;
+    border: 1px dashed #ccc;
+    opacity: 0.7;
+    position: relative;
+}
+
+.archived-post .archived-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #ffc107;
+    color: #333;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 0.8em;
+    font-weight: bold;
+}
+
+/* NEW/UPDATED: Comment & Reply Styling - Instagram-like */
+.comments-section {
+    margin-top: 20px;
+    border-top: 1px solid #efefef; /* Lighter separator */
+    padding-top: 15px;
+}
+
+.comments-section h4 {
+    color: #262626;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+}
+
+.comments-list {
+    margin-top: 10px;
+    max-height: 300px; /* Limit height and add scroll for many comments */
+    overflow-y: auto;
+    padding-right: 10px; /* Space for scrollbar */
+}
+
+.no-comments-message {
+    color: #8e8e8e;
+    font-style: italic;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+}
+
+/* Individual Comment Item Container */
+.comment-item-container {
+    margin-bottom: 10px; /* Space between top-level comments */
+    /* No padding here initially, replies will get it */
+}
+
+.comment-content {
+    display: flex;
+    flex-direction: column;
+    /* Optional: add a small padding to mimic avatar space if you were to add one */
+    padding-left: 0; /* Base comments start without extra padding */
+}
+
+.comment-header {
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping for long comments */
+    align-items: baseline; /* Align username and text */
+    gap: 5px; /* Small gap between username and text */
+    margin-bottom: 2px; /* Reduce space below header */
+}
+
+.comment-username {
+    font-weight: 600; /* Bolder username */
+    color: #262626;
+    font-size: 0.9em;
+}
+
+.comment-text {
+    color: #262626;
+    font-size: 0.9em;
+    flex: 1; /* Allow text to take remaining space */
+}
+
+.comment-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between timestamp and actions */
+    margin-left: 0; /* No initial indent for meta */
+    margin-top: 2px; /* Small space below comment text */
+}
+
+.comment-timestamp {
+    color: #8e8e8e;
+    font-size: 0.75em;
+    white-space: nowrap; /* Prevent timestamp from breaking */
+}
+
+.comment-actions {
+    display: flex;
+    gap: 5px;
+}
+
+.comment-action-button {
+    background: none;
+    border: none;
+    color: #8e8e8e; /* Lighter color for action buttons */
+    font-size: 0.7em; /* Smaller font size */
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0 5px; /* Smaller padding */
+    transition: color 0.2s ease;
+}
+
+.comment-action-button:hover {
+    color: #262626;
+}
+
+.comment-action-button.delete {
+    color: #ed4956; /* Red for delete, subtle */
+}
+.comment-action-button.delete:hover {
+    color: #d83b4b;
+}
+
+
+/* Reply Form (within CommentItem) */
+.reply-form {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    padding-left: 20px; /* Indent the reply form slightly */
+}
+
+.reply-form input {
+    flex: 1;
+    border: 1px solid #dbdbdb;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 0.9em;
+    background-color: #fafafa;
+}
+
+.reply-form button {
+    background-color: #0095f6;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 15px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.reply-form button:hover {
+    background-color: #007acb;
+}
+
+/* Nested Replies Styling */
+.comment-replies {
+    border-left: 1px solid #dbdbdb; /* A subtle line for nesting */
+    padding-left: 15px; /* Indent replies */
+    margin-left: 20px; /* Further indent the reply block */
+    margin-top: 5px; /* Small space above replies block */
+}
+
+/* Adjust nested comment-item-container for further replies */
+.comment-replies > .comment-item-container {
+    margin-top: 10px; /* Space between nested comments */
+    margin-bottom: 0; /* Prevent double spacing */
+}
+
+/* NEW: Search Page Styling (Basic) */
+.search-form-container, .archived-posts-container {
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+}
+
+.search-form-container form div,
+.archived-posts-container .posts-list {
+    margin-bottom: 15px;
+}
+
+.search-form-container form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
+    color: #262626;
+}
+
+.search-form-container form input[type="text"],
+.search-form-container form input[type="date"],
+.search-form-container form input[type="time"],
+.search-form-container form input[type="number"] {
+    width: calc(100% - 20px); /* Adjusted for padding */
+    padding: 10px;
+    border: 1px solid #dbdbdb;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #fafafa;
+}
+
+.search-form-container form button {
+    background-color: #0095f6; /* Consistent blue */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+.search-form-container form button:hover {
+    background-color: #007acb;
+}
+
+/* MyPosts specific styles */
+.my-posts-container .edit-post-section {
+    background-color: #eaf6ff;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #b3e0ff;
+}
+.my-posts-container .edit-post-section h3 {
+    text-align: center;
+    color: #0095f6; /* Consistent blue */
+    margin-bottom: 20px;
+}
+
+.my-posts-container .post-actions button {
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.archive-button {
+    background-color: #8e8e8e; /* Grey for archive */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+}
+.archive-button:hover {
+    background-color: #7a7a7a;
+}
+
+.unarchive-button {
+    background-color: #28a745; /* Green for unarchive */
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+}
+.unarchive-button:hover {
+    background-color: #218838;
+}
+
+/* Sort Controls */
+.sort-controls {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #fafafa;
+    border-radius: 8px;
+    border: 1px solid #efefef;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+}
+
+.sort-controls label {
+    font-weight: 600;
+    color: #262626;
+}
+
+.sort-controls select {
+    padding: 8px 12px;
+    border: 1px solid #dbdbdb;
+    border-radius: 4px;
+    background-color: #fff;
+    font-size: 0.9em;
+    color: #262626;
+    cursor: pointer;
+}
+
+.sort-controls select:focus {
+    outline: none;
+    border-color: #0095f6;
+    box-shadow: 0 0 0 2px rgba(0, 149, 246, 0.2);
 }
