@@ -12,6 +12,12 @@ const postSchema = new mongoose.Schema({
     date: { type: String, required: true },
     time: { type: String, required: true },
     notes: { type: String, default: '' },
+    // --- NEW FIELD ---
+    userId: {
+        type: mongoose.Schema.Types.ObjectId, // This is a Mongoose ID type
+        ref: 'User', // This references the 'User' model
+        required: true // A post must be associated with a user
+    },
     createdAt: { type: Date, default: Date.now }
 });
 

@@ -1,3 +1,4 @@
+
 // travelbphc-backend/controllers/authController.js
 const User = require('../models/User'); // Import the User model
 const bcrypt = require('bcryptjs'); // For password hashing
