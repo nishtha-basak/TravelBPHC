@@ -3,7 +3,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const API_URL_POSTS = 'http://localhost:5000/api/posts';
+const API_URL_POSTS = `${process.env.REACT_APP_API_BASE_URL}/api/posts`;
+
 
 function CreatePost({ token, currentUserId }) { // Receive currentUserId
     const navigate = useNavigate();

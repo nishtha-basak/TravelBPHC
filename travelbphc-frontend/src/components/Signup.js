@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; // Use useNavigate for v6/7
 import axios from 'axios';
 
-const API_URL_AUTH = 'http://localhost:5000/api/auth';
+const API_URL_AUTH = `${process.env.REACT_APP_API_BASE_URL}/api/auth`;
 
 function Signup({ onSignupSuccess }) {
     const [email, setEmail] = useState('');

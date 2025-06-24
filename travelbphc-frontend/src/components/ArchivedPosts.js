@@ -3,8 +3,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const API_URL_ARCHIVED_POSTS = 'http://localhost:5000/api/posts/archived/me';
-const API_URL_POSTS = 'http://localhost:5000/api/posts'; // For unarchive action
+const API_URL_ARCHIVED_POSTS = `${process.env.REACT_APP_API_BASE_URL}/api/posts/archived/me`;
+ 
+const API_URL_POSTS = `${process.env.REACT_APP_API_BASE_URL}/api/posts`;
+
 
 function ArchivedPosts({ token, currentUserId }) {
     const navigate = useNavigate();

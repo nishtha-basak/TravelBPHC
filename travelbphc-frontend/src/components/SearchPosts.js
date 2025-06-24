@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const API_URL_SEARCH_POSTS = 'http://localhost:5000/api/posts/search';
+const API_URL_SEARCH_POSTS = `${process.env.REACT_APP_API_BASE_URL}/api/posts/search`;
 
 function SearchPosts({ token }) {
     const [searchFormData, setSearchFormData] = useState({

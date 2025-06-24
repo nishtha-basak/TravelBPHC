@@ -3,8 +3,9 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-const API_URL_MY_POSTS = 'http://localhost:5000/api/posts/my-posts'; // Will fetch all my posts, including archived ones
-const API_URL_POSTS = 'http://localhost:5000/api/posts'; // For PUT/DELETE operations
+const API_URL_MY_POSTS = `${process.env.REACT_APP_API_BASE_URL}/api/posts/my-posts`; // Will fetch all my posts, including archived ones
+const API_URL_POSTS = `${process.env.REACT_APP_API_BASE_URL}/api/posts`;
+
 
 function MyPosts({ token, currentUserId }) {
     const navigate = useNavigate();

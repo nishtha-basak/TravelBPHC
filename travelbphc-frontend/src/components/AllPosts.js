@@ -2,8 +2,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 
-const API_URL_POSTS = 'http://localhost:5000/api/posts';
-const API_URL_COMMENTS = 'http://localhost:5000/api/comments'; // API for comments
+const API_URL_POSTS = `${process.env.REACT_APP_API_BASE_URL}/api/posts`;
+
+const API_URL_COMMENTS = `${process.env.REACT_APP_API_BASE_URL}/api/comments`; // API for comments
 
 // Helper function to build a nested comment tree
 const buildCommentTree = (comments, parentId = null) => {
